@@ -1,6 +1,6 @@
 Oracle Mail Spooler
 ---
-Semplice implementazione per inviare mail da una istanza Oracle (fatta in 3 ore)
+Semplice implementazione per inviare mail da una istanza Oracle
 
 Oggetti
 ---
