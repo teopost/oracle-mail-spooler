@@ -27,6 +27,7 @@ Per utilizzare la procedure che mette in coda i messaggi e per consultare la lis
 ```sql
 SQL> grant execute on MAIL_QUEUE to MYUSER;
 SQL> grant all on MAIL_SPOOLER to MYUSER;
+SQL> grant execute on SEND_QUEUE to MYUSER;
 ```
 
 Utilizzo
@@ -36,7 +37,12 @@ Al primo utilizzo è consigliabile creare 2 sinomini per accedere piu' facilment
 
 ```sql
 create synonym MAIL_QUEUE for mail_queue.MAIL_QUEUE;
+
+// Se si desidera consultare la tabella di spooler
 create synonym MAIL_SPOOLER for mail_queue.MAIL_SPOOLER;
+
+// Se si desidera forzare l'invio delle mail
+create synonym SEND_QUEUE for mail_queue.SEND_QUEUE;
 ```
 
 Limitazioni
