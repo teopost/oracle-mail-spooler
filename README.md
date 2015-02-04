@@ -88,3 +88,4 @@ select * from dba_network_acls
 Riferimenti
 ---
 - http://remidian.com/2013/01/email-network-access-in-oracle-11g-network-access-control-list-acl/
+- http://oracle-base.com/articles/misc/email-from-oracle-plsql.php
