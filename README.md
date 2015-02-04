@@ -38,10 +38,10 @@ Al primo utilizzo è consigliabile creare 2 sinomini per accedere piu' facilment
 ```sql
 create synonym MAIL_QUEUE for mail_queue.MAIL_QUEUE;
 
-// Se si desidera consultare la tabella di spooler
+-- Se si desidera consultare la tabella di spooler
 create synonym MAIL_SPOOLER for mail_queue.MAIL_SPOOLER;
 
-// Se si desidera forzare l'invio delle mail
+-- Se si desidera forzare l'invio delle mail
 create synonym SEND_QUEUE for mail_queue.SEND_QUEUE;
 ```
 
