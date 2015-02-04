@@ -36,13 +36,13 @@ Collegarsi al proprio utente oracle.
 Al primo utilizzo è consigliabile creare 2 sinomini per accedere piu' facilmente agli oggetti:
 
 ```sql
-create synonym MAIL_QUEUE for mail_queue.MAIL_QUEUE;
+SQL> create synonym MAIL_QUEUE for mail_queue.MAIL_QUEUE;
 
 -- Se si desidera consultare la tabella di spooler
-create synonym MAIL_SPOOLER for mail_queue.MAIL_SPOOLER;
+SQL> create synonym MAIL_SPOOLER for mail_queue.MAIL_SPOOLER;
 
 -- Se si desidera forzare l'invio delle mail
-create synonym SEND_QUEUE for mail_queue.SEND_QUEUE;
+SQL> create synonym SEND_QUEUE for mail_queue.SEND_QUEUE;
 ```
 
 Limitazioni
