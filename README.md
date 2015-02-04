@@ -2,11 +2,8 @@
 
 Semplice implementazione per inviare mail da una istanza Oracle
 
-Oggetti
----
-
 Tabelle
-===
+---
 
 | Tabella | Descrizione |
 |---------|-------------|
@@ -14,7 +11,7 @@ Tabelle
 | MAIL_SPOOLER | Contiene la coda di messaggi da inviare |
 
 Procedure
-===
+---
 
 | Procedura  | Descrizione |
 |------------|-------------|
@@ -23,7 +20,7 @@ Procedure
 | SEND_QUEUE | Procedura da schedulare che verifica sulla tabella MAIL_SPOOLER l'esistenza di massaggi da spedire (Statu = Q) e se esistono chiama la SEND_MAIL per l'invio. |
 
 Grants
-===
+---
 Tutti gli oggetti per l'invio delle mail sono creati in uno schema specifico (nel caso descritto chiamao MAIL_QUEUE).
 Per utilizzare la procedure che mette in coda i messaggi e per consultare la lista dei messaggi in coda, occorre dare i seguenti grant:
 
