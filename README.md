@@ -138,8 +138,11 @@ Utilizzo
 ---
 
 ```sql
-/* Dove 1 è il numero mailbox configurato in MAIL_BOXES */
+/* Mette in coda la mail per la spedizione (1 è il numero mailbox configurato in MAIL_BOXES) */
 exec MAIL_QUEUE.MAIL_QUEUE ('Oggetto', 'Testo in formato TXT', 'Testo in formato HTML', 'destinatazio@gmail.com', 1) 
+
+/* Invia la mail */
+exec MAIL_QUEUE.SEND_QUEUE
 ```
 Riferimenti
 ---
