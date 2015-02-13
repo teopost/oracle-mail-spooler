@@ -131,7 +131,13 @@ END;
 ```sql
 select * from dba_network_acls
 ```
+Utilizzo
+---
 
+```sql
+/* Dove 1 è il numero mailbox configurato in MAIL_BOXES */
+exec MAIL_QUEUE.MAIL_QUEUE ('Oggetto', 'Testo in formato TXT', 'Testo in formato HTML', 'destinatazio@gmail.com', 1) 
+```
 Riferimenti
 ---
 - http://remidian.com/2013/01/email-network-access-in-oracle-11g-network-access-control-list-acl/
