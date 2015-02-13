@@ -92,7 +92,7 @@ Note
 Per poter effettuare chiamate http, smtp, ssh, ecc direttamente da una istanza oracle bisogna, per questioni di sicurezza, attivare specifiche ACL.
 Per fare questo mi sono collegato con l'utente system e ho creato una specifica ACL, quindi:
 
-1. Creo una ACL per il mio utente MAIL_QUEUE
+* Creo una ACL per il mio utente MAIL_QUEUE
 
 ```sql
 /* Eseguire come system */
@@ -130,10 +130,11 @@ END;
 /
 ```
 
-3. Controllo che l'ACL sia stata creata
+*. Controllo che l'ACL sia stata creata
 ```sql
 select * from dba_network_acls
 ```
+
 Utilizzo
 ---
 
