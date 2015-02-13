@@ -22,6 +22,7 @@ Procedure
 Schema
 ---
 
+```sql
 /* 1. Creare l'utente come system */
 
 DROP USER  MAIL_QUEUE CASCADE;
@@ -49,6 +50,8 @@ GRANT DELETE ANY TABLE TO MAIL_QUEUE;
 GRANT CREATE VIEW TO MAIL_QUEUE;
 
 /* 2. Creare gli oggetti con MailSpooler.project */
+
+```
 
 Grants
 ---
