@@ -92,6 +92,7 @@ Per fare questo mi sono collegato con l'utente system e ho creato una specifica 
 1. Creo una ACL per il mio utente MAIL_QUEUE
 
 ```sql
+/* Eseguire come system */
 BEGIN
   DBMS_NETWORK_ACL_ADMIN.create_acl (
     acl          => 'mail_queue.xml', 
@@ -103,11 +104,18 @@ BEGIN
   COMMIT;
 END;
 /
-```
 
-2. Aggiungo alla ACL la possibilita di aprire una connessione sulla porta 25 per il mio host smtp
+/* Add privilege of ACL to user MAIL_QUEUE */
+BEGIN
+  DBMS_NETWORK_ACL_ADMIN.ADD_PRIVILEGE
+    (acl      => 'mail_queue.xml', 
+    principal => 'MAIL_QUEUE',
+    is_grant  =>  true, 
+    privilege => 'resolve');
+  commit;
+END;
+/
 
-```sql
 BEGIN
   DBMS_NETWORK_ACL_ADMIN.assign_acl (
     acl => 'mail_queue.xml',
