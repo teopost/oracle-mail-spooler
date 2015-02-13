@@ -19,30 +19,63 @@ Procedure
 | SEND_MAIL  | Procedura che effettua l'invio della mail | 
 | SEND_QUEUE | Procedura da schedulare che verifica sulla tabella MAIL_SPOOLER l'esistenza di massaggi da spedire (Statu = Q) e se esistono chiama la SEND_MAIL per l'invio. |
 
+Schema
+---
+
+/* 1. Creare l'utente come system */
+
+DROP USER  MAIL_QUEUE CASCADE;
+
+CREATE USER MAIL_QUEUE
+  IDENTIFIED BY MAIL_QUEUE
+  DEFAULT TABLESPACE USERS
+  TEMPORARY TABLESPACE TEMP
+  ACCOUNT UNLOCK;
+
+ALTER USER MAIL_QUEUE QUOTA UNLIMITED ON USERS;
+
+GRANT CONNECT, RESOURCE TO MAIL_QUEUE;
+GRANT UPDATE ANY TABLE TO MAIL_QUEUE;
+GRANT SELECT ANY TABLE TO MAIL_QUEUE;
+GRANT CREATE ANY TABLE TO MAIL_QUEUE;
+GRANT QUERY REWRITE TO MAIL_QUEUE;
+GRANT ALTER ANY TRIGGER TO MAIL_QUEUE;
+GRANT EXECUTE ANY PROCEDURE TO MAIL_QUEUE;
+GRANT CREATE ANY SYNONYM TO MAIL_QUEUE;
+GRANT INSERT ANY TABLE TO MAIL_QUEUE;
+GRANT EXECUTE ANY LIBRARY TO MAIL_QUEUE;
+GRANT UNLIMITED TABLESPACE TO MAIL_QUEUE;
+GRANT DELETE ANY TABLE TO MAIL_QUEUE;
+GRANT CREATE VIEW TO MAIL_QUEUE;
+
+/* 2. Creare gli oggetti con MailSpooler.project */
+
 Grants
 ---
 Tutti gli oggetti per l'invio delle mail sono creati in uno schema specifico (nel caso descritto chiamao MAIL_QUEUE).
 Per utilizzare la procedure che mette in coda i messaggi e per consultare la lista dei messaggi in coda, occorre dare i seguenti grant:
 
 ```sql
-SQL> grant execute on MAIL_QUEUE to MYUSER;
-SQL> grant all on MAIL_SPOOLER to MYUSER;
-SQL> grant execute on SEND_QUEUE to MYUSER;
+/* Eseguire come system */
+grant execute on mail_queue.MAIL_QUEUE to MYUSER;
+grant all on mail_queue.MAIL_SPOOLER to MYUSER;
+grant execute on mail_queue.SEND_QUEUE to MYUSER;
 ```
 
-Utilizzo
+Synonyms
 ---
-Collegarsi al proprio utente oracle.
+Collegarsi all'utente system di oracle.
 Al primo utilizzo è consigliabile creare 2 sinomini per accedere piu' facilmente agli oggetti:
 
 ```sql
-SQL> create synonym MAIL_QUEUE for mail_queue.MAIL_QUEUE;
+/* Eseguire come system */
+create synonym MYUSER.MAIL_QUEUE for mail_queue.MAIL_QUEUE;
 
 -- Se si desidera consultare la tabella di spooler
-SQL> create synonym MAIL_SPOOLER for mail_queue.MAIL_SPOOLER;
+create synonym MYUSER.MAIL_SPOOLER for mail_queue.MAIL_SPOOLER;
 
 -- Se si desidera forzare l'invio delle mail
-SQL> create synonym SEND_QUEUE for mail_queue.SEND_QUEUE;
+create synonym MYUSER.SEND_QUEUE for mail_queue.SEND_QUEUE;
 ```
 
 Limitazioni
