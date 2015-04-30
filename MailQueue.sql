@@ -5,6 +5,8 @@ create table MAIL_SPOOLER
   TEXT_MESSAGE_BODY    varchar2(4000)  not null,
   HTML_MESSAGE_BODY    varchar2(4000) ,
   DESTINATION          varchar2(2000)  not null,
+  DESTINATION_CC       varchar2(2000)  not null,
+  DESTINATION_BCC      varchar2(2000)  not null,
   ID_MAILBOX           number(28)      not null,
   DATE_CREATED         date            not null,
   DATE_PROCESSED       date           ,
@@ -32,123 +34,81 @@ create sequence SEQ_MAILSPOOLER_ID start with 1 nocache;
 
 create sequence SEQ_MAILBOXES_ID start with 1 nocache;
 
-create procedure MAIL_QUEUE (p_SUBJECT varchar2, p_TEXTBODY varchar2, p_HTMLBODY varchar2, p_DESTINATION varchar2, p_IDMAILBOX number) as
-  v_VIDMAILBOXES number(28);
-  v_VEMAISENDMAI varchar2(500);
-  v_VHOSTMAILBOX varchar2(500);
-  v_VOUTPORTMAIL number(5);
-  v_FOUND boolean;
-BEGIN
-  -- 
-  -- MAIL QUEUE Body
-  -- Corpo Procedura
-  -- 
-  -- 
-  -- Esiste una configurazione per questa mailbox .
-  -- 
-  declare cursor S0 is
-  select
-    A.ID as ID,
-    A.EMAIL_SENDER as EMAILSENDER,
-    A.HOST_NAME as HOST,
-    A.OUT_PORT as OUTPORT
-  from
-    MAIL_BOXES A
-  where (A.ID = p_IDMAILBOX)
-    ;
-  begin open S0;
-  fetch S0 into
-    v_VIDMAILBOXES,
-    v_VEMAISENDMAI,
-    v_VHOSTMAILBOX,
-    v_VOUTPORTMAIL;
-  v_FOUND := S0%FOUND;
-  close S0; end;
-  if v_FOUND then
-    insert into MAIL_SPOOLER
-    (
-      ID,
-      SUBJECT,
-      TEXT_MESSAGE_BODY,
-      HTML_MESSAGE_BODY,
-      DESTINATION,
-      ID_MAILBOX,
-      DATE_CREATED,
-      STATUS
-    )
-    values
-    (
-      SEQ_MAILSPOOLER_ID.NextVal,
-      p_SUBJECT,
-      p_TEXTBODY,
-      p_HTMLBODY,
-      p_DESTINATION,
-      p_IDMAILBOX,
-      SYSDATE,
-      'Q'
-    )
-    ;
-    COMMIT;
-  else
-    raise_application_error(-20000-(1),'Mailbox not found');
-  end if;
-END;
-/
+/* Formatted on 30/04/2015 17:07:58 (QP5 v5.269.14213.34769) */
+create or replace procedure mail_queue (p_subject            varchar2,
+                                        p_textbody           varchar2,
+                                        p_htmlbody           varchar2,
+                                        p_destination        varchar2,
+                                        p_destination_cc     varchar2,
+                                        p_destination_bcc    varchar2,
+                                        p_idmailbox          number)
+as
+   v_vidmailboxes   number (28);
+   v_vemaisendmai   varchar2 (500);
+   v_vhostmailbox   varchar2 (500);
+   v_voutportmail   number (5);
+   v_found          boolean;
+begin
+   --
+   -- MAIL QUEUE Body
+   -- Corpo Procedura
+   --
 
+   --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+   -- Esiste una configurazione per questa mailbox .
+   --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+   declare
+      cursor s0
+      is
+         select a.id as id,
+                a.email_sender as emailsender,
+                a.host_name as host,
+                a.out_port as outport
+           from mail_boxes a
+          where (a.id = p_idmailbox);
+   begin
+      open s0;
 
-create or replace procedure SEND_QUEUE as
-  v_SERRORMESSAG varchar2(2000);
-  v_SERRORNUMBER varchar2(50);
-BEGIN
-  -- 
-  -- SEND QUEUE Body
-  -- Corpo Procedura
-  -- 
-  declare cursor C2 is
-    select
-      A.ID as IDMAILSPOOLE,
-      A.SUBJECT as SUBJMAILSPOO,
-      A.TEXT_MESSAGE_BODY as TEXMESBOMASP,
-      A.DESTINATION as DESTMAILSPOO,
-      A.ID_MAILBOX as IDMAILMAISPO,
-      A.STATUS as STATMAILSPOO,
-      B.HOST_NAME as HOSTMAILBOXE,
-      B.EMAIL_SENDER as EMAISENDMAIL,
-      B.OUT_PORT as OUTPORTMAILB,
-      A.DATE_CREATED as DATCREMAISPO,
-      A.DATE_PROCESSED as DATPROMAISPO,
-      A.HTML_MESSAGE_BODY as HTMMESBOMASP,
-      A.ERR_MESSAGE as ERRMESMAISPO,
-      A.ERR_NUMBER as ERRNUMMAISPO
-    from
-      MAIL_SPOOLER A,
-      MAIL_BOXES B
-    where B.ID = A.ID_MAILBOX
-    and   (A.STATUS = 'Q')
-    ;
-  begin for MAILSPOOLERMAILSPOOLER in C2 loop
-    begin
-      SEND_MAIL2 (MAILSPOOLERMAILSPOOLER.DESTMAILSPOO,MAILSPOOLERMAILSPOOLER.EMAISENDMAIL,MAILSPOOLERMAILSPOOLER.SUBJMAILSPOO,MAILSPOOLERMAILSPOOLER.TEXMESBOMASP,MAILSPOOLERMAILSPOOLER.HTMMESBOMASP,MAILSPOOLERMAILSPOOLER.HOSTMAILBOXE);
-      --SEND_MAIL (MAILSPOOLERMAILSPOOLER.DESTMAILSPOO,MAILSPOOLERMAILSPOOLER.SUBJMAILSPOO,MAILSPOOLERMAILSPOOLER.TEXMESBOMASP,MAILSPOOLERMAILSPOOLER.HOSTMAILBOXE,MAILSPOOLERMAILSPOOLER.EMAISENDMAIL,MAILSPOOLERMAILSPOOLER.OUTPORTMAILB);
-      update MAIL_SPOOLER set
-        STATUS = 'S',
-        DATE_PROCESSED = SYSDATE
-      where (ID = MAILSPOOLERMAILSPOOLER.IDMAILSPOOLE)
-      ;
-      COMMIT;
-    exception when others then
-      v_SERRORMESSAG := SQLERRM;
-      v_SERRORNUMBER := TO_CHAR ( SQLCODE );
-      update MAIL_SPOOLER set
-        STATUS = 'E',
-        DATE_PROCESSED = SYSDATE,
-        ERR_NUMBER = MAIL_SPOOLER.ERR_NUMBER,
-        ERR_MESSAGE = v_SERRORMESSAG
-      where (ID = MAILSPOOLERMAILSPOOLER.IDMAILSPOOLE)
-      ;
-      COMMIT;
-    end;
-  end loop; end;
-END;
+      fetch s0
+         into v_vidmailboxes,
+              v_vemaisendmai,
+              v_vhostmailbox,
+              v_voutportmail;
+
+      v_found := s0%found;
+
+      close s0;
+   end;
+
+   if v_found
+   then
+      
+      --- caricamento della tabella di spool        
+      insert into mail_spooler (id,
+                                subject,
+                                text_message_body,
+                                html_message_body,
+                                destination,
+                                destination_cc,
+                                destination_bcc,
+                                id_mailbox,
+                                date_created,
+                                status)
+           values (seq_mailspooler_id.nextval,
+                   p_subject,
+                   p_textbody,
+                   p_htmlbody,
+                   p_destination,
+                   p_destination_cc,
+                   p_destination_bcc,
+                   p_idmailbox,
+                   sysdate,
+                   'Q');
+
+      commit;
+   else
+      raise_application_error (-20000 - (1), 'Mailbox not found');
+   end if;
+end;
 /
 
