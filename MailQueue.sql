@@ -1,4 +1,4 @@
-create table MAIL_SPOOLER
+create table MAIL_QUEUE.MAIL_SPOOLER
 (
   ID                   number(28)      not null,
   SUBJECT              varchar2(3000)  not null,
@@ -15,10 +15,9 @@ create table MAIL_SPOOLER
   ERR_NUMBER           varchar2(2000) 
 );
 
-alter table MAIL_SPOOLER add constraint MAIL_SPOOLER_PK primary key (ID) 
-go
+alter table MAIL_QUEUE.MAIL_SPOOLER add constraint MAIL_SPOOLER_PK primary key (ID);
 
-create table MAIL_BOXES
+create table MAIL_QUEUE.MAIL_BOXES
 (
   ID                   number(28)      not null,
   EMAIL_SENDER         varchar2(500)   not null,
@@ -26,16 +25,16 @@ create table MAIL_BOXES
   OUT_PORT             number(5)       not null
 );
 
-alter table MAIL_BOXES add constraint MAIL_BOXES_PK primary key (ID);
+alter table MAIL_QUEUE.MAIL_BOXES add constraint MAIL_BOXES_PK primary key (ID);
 
-alter table MAIL_SPOOLER add constraint MAILBOXESPOO foreign key (ID_MAILBOX) references MAIL_BOXES ;
+alter table MAIL_QUEUE.MAIL_SPOOLER add constraint MAILBOXESPOO foreign key (ID_MAILBOX) references MAIL_QUEUE.MAIL_BOXES ;
 
-create sequence SEQ_MAILSPOOLER_ID start with 1 nocache;
+create sequence MAIL_QUEUE.SEQ_MAILSPOOLER_ID start with 1 nocache;
 
-create sequence SEQ_MAILBOXES_ID start with 1 nocache;
+create sequence MAIL_QUEUE.SEQ_MAILBOXES_ID start with 1 nocache;
 
 /* Formatted on 30/04/2015 17:07:58 (QP5 v5.269.14213.34769) */
-create or replace procedure mail_queue (p_subject            varchar2,
+create or replace procedure MAIL_QUEUE.mail_queue (p_subject            varchar2,
                                         p_textbody           varchar2,
                                         p_htmlbody           varchar2,
                                         p_destination        varchar2,
@@ -111,4 +110,3 @@ begin
    end if;
 end;
 /
-
