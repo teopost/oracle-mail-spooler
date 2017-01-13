@@ -147,5 +147,6 @@ exec MAIL_QUEUE.SEND_QUEUE
 ```
 Riferimenti
 ---
-- http://remidian.com/2013/01/email-network-access-in-oracle-11g-network-access-control-list-acl/
-- http://oracle-base.com/articles/misc/email-from-oracle-plsql.php
+* http://remidian.com/2013/01/email-network-access-in-oracle-11g-network-access-control-list-acl/
+* http://oracle-base.com/articles/misc/email-from-oracle-plsql.php
+* https://arkatec.wordpress.com/2011/08/15/sending-email-using-oracle-database-and-google-mail-service/
